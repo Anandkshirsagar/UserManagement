@@ -19,15 +19,21 @@ export default function AddUserScreen() {
       return;
     }
 
-    await addUser({ name, email });
-    Alert.alert("Success", "User added successfully");
-    setName("");
-    setEmail("");
+    try {
+      await addUser({ name, email });
+
+      Alert.alert("Success", "User added successfully");
+
+      setName("");
+      setEmail("");
+    } catch (err) {
+      console.log("ADD USER SCREEN ERROR:", err);
+      Alert.alert("Error", "User not added");
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Name label */}
       <Text style={styles.label}>Enter Name</Text>
       <TextInput
         style={styles.input}
@@ -36,7 +42,6 @@ export default function AddUserScreen() {
         onChangeText={setName}
       />
 
-      {/* Email label */}
       <Text style={styles.label}>Enter Email</Text>
       <TextInput
         style={styles.input}
@@ -59,7 +64,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     marginBottom: 5,
-    color: "#333",
   },
   input: {
     borderWidth: 1,

@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, ScrollView } from "react-native";
 import { getUsers, deleteUser } from "../services/api";
 
 export default function UserListScreen() {
   const [users, setUsers] = useState([]);
 
   const loadUsers = async () => {
-    const data = await getUsers();
-    setUsers(data);
+    try {
+      const data = await getUsers();
+      setUsers(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.log("LOAD USERS ERROR:", err);
+      setUsers([]);
+    }
   };
 
   useEffect(() => {
@@ -20,8 +25,12 @@ export default function UserListScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>User List</Text>
+
+      {users.length === 0 && (
+        <Text style={styles.noUser}>No users found</Text>
+      )}
 
       {users.map((user) => (
         <View key={user.id} style={styles.userCard}>
@@ -37,30 +46,36 @@ export default function UserListScreen() {
           </View>
         </View>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: "#121212",
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 12,
-    color: "#ffffff", // 👈 white
+    color: "#ffffff",
+  },
+  noUser: {
+    color: "#ccc",
+    fontSize: 16,
+    marginTop: 20,
   },
   userCard: {
-    backgroundColor: "#2c2c2c", // dark background
+    backgroundColor: "#2c2c2c",
     borderRadius: 8,
     padding: 14,
     marginBottom: 14,
   },
   text: {
-    fontSize: 17,      // 👈 font bigger
-    fontWeight: "bold",// 👈 bold text
-    color: "#ffffff",  // 👈 white text
+    fontSize: 17,
+    fontWeight: "bold",
+    color: "#ffffff",
     marginBottom: 6,
   },
   deleteBtn: {
